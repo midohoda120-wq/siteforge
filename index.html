@@ -1568,5 +1568,17 @@ document.getElementById("episodePlayerModal")?.addEventListener("click",function
 
 loadEpisodesFromD1();
 </script>
+
+<div id="episodePlayerModal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.9);align-items:center;justify-content:center;padding:20px;">
+  <div style="width:min(950px,100%);background:#111;border:1px solid #444;border-radius:18px;overflow:hidden;">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:15px 20px;border-bottom:1px solid #333;color:white;">
+      <strong id="episodePlayerTitle">EPISODE</strong>
+      <button type="button" onclick="closeEpisodePlayer()" style="background:none;border:0;color:white;font-size:30px;cursor:pointer;">×</button>
+    </div>
+    <video id="episodeVideoPlayer" controls playsinline style="display:none;width:100%;aspect-ratio:16/9;background:#000;"></video>
+    <iframe id="episodeYoutubePlayer" style="display:none;width:100%;aspect-ratio:16/9;border:0;" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+  </div>
+</div>
+
 </body>
 </html>
