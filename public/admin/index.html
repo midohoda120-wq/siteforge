@@ -62,11 +62,41 @@
     }
     textarea{min-height:100px;resize:vertical}
     .hidden{display:none}
-  </style>
+#loginScreen{
+  max-width:400px;
+  margin:80px auto;
+  padding:30px;
+  background:#171717;
+  border:1px solid #333;
+  border-radius:16px;
+  text-align:center;
+}
+
+#loginScreen h2{
+  margin-top:0;
+}
+
+#loginScreen input{
+  margin:15px 0;
+}
+
+#loginScreen button{
+  width:100%;
+}
+
+#loginMessage{
+  color:#f55;
+}  
+</style>
 </head>
 
 <body>
-
+<div id="loginScreen">
+  <h2>BACK TO X — ADMIN LOGIN</h2>
+  <input id="adminPassword" type="password" placeholder="Admin Password">
+  <button onclick="adminLogin()">LOGIN</button>
+  <p id="loginMessage"></p>
+</div>
 <header>
   <h1>BACK TO X — ADMIN</h1>
   <p>Content Management Dashboard</p>
@@ -214,7 +244,33 @@ async function addMessage(){
 
   alert(result.message || "Message added");
 }
+document.querySelector("main").style.display = "none";
 
+async function adminLogin(){
+  const password = document.getElementById("adminPassword").value;
+  const message = document.getElementById("loginMessage");
+
+  const response = await fetch("/api/admin", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      action: "login",
+      password: password
+    })
+  });
+
+  const result = await response.json();
+
+  if(result.success){
+    document.getElementById("loginScreen").style.display = "none";
+    document.querySelector("main").style.display = "block";
+    loadData();
+  }else{
+    message.textContent = result.error || "Login failed";
+  }
+}
 loadData();
 </script>
 
