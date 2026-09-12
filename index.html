@@ -1394,5 +1394,30 @@ $$(".watch-btn").forEach(btn=>{
 });
 
 </script>
+<script>
+async function loadD1Content(){
+  try{
+    const response = await fetch("/api/content");
+    const data = await response.json();
+
+    if(data.settings){
+      const title = document.querySelector(".hero h1");
+      const subtitle = document.querySelector(".hero p");
+
+      if(title && data.settings.hero_title){
+        title.textContent = data.settings.hero_title;
+      }
+
+      if(subtitle && data.settings.hero_subtitle){
+        subtitle.textContent = data.settings.hero_subtitle;
+      }
+    }
+  }catch(error){
+    console.error("D1 connection error:", error);
+  }
+}
+
+loadD1Content();
+</script>
 </body>
 </html>
