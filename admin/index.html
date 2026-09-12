@@ -1,44 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BACK TO X — Admin</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#0b080a;color:#f5edf0;font-family:Arial,sans-serif}
-header{padding:24px;border-bottom:1px solid #4A102A}
-h1{margin:0;color:#fff}
-main{padding:24px;max-width:1100px;margin:auto}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-.card{background:#151015;border:1px solid #4A102A;border-radius:14px;padding:22px}
-.card h2{margin-top:0}
-button{background:#4A102A;color:white;border:0;border-radius:8px;padding:12px 18px;cursor:pointer}
-button:hover{opacity:.85}
-.status{margin-top:25px;padding:15px;border-radius:10px;background:#151015}
-</style>
-<script src="config.js"></script></head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BACK TO X — Admin</title>
+  <style>
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial,sans-serif;
+      background:#0d0d0d;
+      color:#fff;
+    }
+    header{
+      padding:22px;
+      border-bottom:1px solid #333;
+      position:sticky;
+      top:0;
+      background:#0d0d0d;
+      z-index:10;
+    }
+    header h1{margin:0;font-size:24px}
+    header p{margin:6px 0 0;color:#999}
+    main{padding:20px;max-width:1000px;margin:auto}
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:16px;
+    }
+    .card{
+      background:#171717;
+      border:1px solid #292929;
+      border-radius:14px;
+      padding:20px;
+    }
+    .card h2{margin-top:0}
+    button{
+      border:0;
+      border-radius:8px;
+      padding:11px 16px;
+      background:#fff;
+      color:#000;
+      font-weight:bold;
+      cursor:pointer;
+    }
+    .status{
+      margin-top:20px;
+      padding:15px;
+      border-radius:10px;
+      background:#111;
+      color:#aaa;
+    }
+    input,textarea{
+      width:100%;
+      margin:8px 0;
+      padding:12px;
+      border-radius:8px;
+      border:1px solid #333;
+      background:#0d0d0d;
+      color:#fff;
+    }
+    textarea{min-height:100px;resize:vertical}
+    .hidden{display:none}
+  </style>
+</head>
+
 <body>
 
 <header>
   <h1>BACK TO X — ADMIN</h1>
+  <p>Content Management Dashboard</p>
 </header>
 
 <main>
+
   <div class="grid">
-    <div class="card"><h2>Hero</h2><p>Manage hero text and media.</p><button>Manage</button></div>
-    <div class="card"><h2>Episodes</h2><p>Add, edit or remove episodes.</p><button>Manage</button></div>
-    <div class="card"><h2>Cast</h2><p>Manage participants.</p><button>Manage</button></div>
-    <div class="card"><h2>Stories</h2><p>Manage stories and messages.</p><button>Manage</button></div>
-    <div class="card"><h2>Images</h2><p>Manage website images.</p><button>Manage</button></div>
-    <div class="card"><h2>Design</h2><p>Manage colors and fonts.</p><button>Manage</button></div>
+
+    <section class="card">
+      <h2>Hero</h2>
+      <input id="heroTitle" placeholder="Hero title">
+      <input id="heroSubtitle" placeholder="Hero subtitle">
+      <button onclick="saveHero()">Save Hero</button>
+    </section>
+
+    <section class="card">
+      <h2>Episodes</h2>
+      <input id="episodeTitle" placeholder="Episode title">
+      <textarea id="episodeDescription" placeholder="Episode description"></textarea>
+      <input id="episodeVideo" placeholder="Video URL">
+      <input id="episodeImage" placeholder="Image URL">
+      <button onclick="addEpisode()">Add Episode</button>
+    </section>
+
+    <section class="card">
+      <h2>Cast</h2>
+      <input id="castName" placeholder="Name">
+      <input id="castRole" placeholder="Role">
+      <textarea id="castBio" placeholder="Bio"></textarea>
+      <input id="castImage" placeholder="Image URL">
+      <button onclick="addCast()">Add Cast Member</button>
+    </section>
+
+    <section class="card">
+      <h2>Stories</h2>
+      <input id="storyAuthor" placeholder="Author name">
+      <textarea id="storyText" placeholder="Story"></textarea>
+      <input id="storyImage" placeholder="Image URL">
+      <button onclick="addStory()">Add Story</button>
+    </section>
+
+    <section class="card">
+      <h2>Messages</h2>
+      <textarea id="messageText" placeholder="Message"></textarea>
+      <button onclick="addMessage()">Add Message</button>
+    </section>
+
   </div>
 
-  <div class="status">
-    <strong>ADMIN PANEL READY</strong>
-    <p>The dashboard structure is ready. Database controls will be connected next.</p>
+  <div class="status" id="status">
+    Connecting to Cloudflare D1...
   </div>
+
 </main>
+
+<script src="config.js"></script>
+
+<script>
+const API = "/api/content";
+
+async function loadData(){
+  try{
+    const response = await fetch(API);
+    const data = await response.json();
+
+    document.getElementById("status").textContent =
+      "CONNECTED — Cloudflare D1 is working.";
+      
+    if(data.settings){
+      document.getElementById("heroTitle").value =
+        data.settings.hero_title || "";
+      document.getElementById("heroSubtitle").value =
+        data.settings.hero_subtitle || "";
+    }
+  }catch(error){
+    document.getElementById("status").textContent =
+      "ERROR — Could not connect to Cloudflare D1.";
+    console.error(error);
+  }
+}
+
+async function send(data){
+  const response = await fetch(API,{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify(data)
+  });
+
+  return response.json();
+}
+
+async function saveHero(){
+  const result = await send({
+    action:"saveHero",
+    hero_title:document.getElementById("heroTitle").value,
+    hero_subtitle:document.getElementById("heroSubtitle").value
+  });
+
+  alert(result.message || "Hero saved");
+}
+
+async function addEpisode(){
+  const result = await send({
+    action:"addEpisode",
+    title:document.getElementById("episodeTitle").value,
+    description:document.getElementById("episodeDescription").value,
+    video_url:document.getElementById("episodeVideo").value,
+    image_url:document.getElementById("episodeImage").value
+  });
+
+  alert(result.message || "Episode added");
+}
+
+async function addCast(){
+  const result = await send({
+    action:"addCast",
+    name:document.getElementById("castName").value,
+    role:document.getElementById("castRole").value,
+    bio:document.getElementById("castBio").value,
+    image_url:document.getElementById("castImage").value
+  });
+
+  alert(result.message || "Cast member added");
+}
+
+async function addStory(){
+  const result = await send({
+    action:"addStory",
+    author_name:document.getElementById("storyAuthor").value,
+    story:document.getElementById("storyText").value,
+    image_url:document.getElementById("storyImage").value
+  });
+
+  alert(result.message || "Story added");
+}
+
+async function addMessage(){
+  const result = await send({
+    action:"addMessage",
+    message:document.getElementById("messageText").value
+  });
+
+  alert(result.message || "Message added");
+}
+
+loadData();
+</script>
 
 </body>
 </html>
