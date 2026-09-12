@@ -640,7 +640,51 @@ header{position:fixed;height:70px;padding:0 18px}.logo{font-size:19px;letter-spa
 }
 
 </style>
-</head>
+
+<style id="xwall-premium-style">
+.xwall-card {
+  position: relative;
+  padding: 28px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(255,255,255,.09);
+  background: linear-gradient(145deg, rgba(74,16,42,.28), rgba(255,255,255,.025));
+  box-shadow: 0 18px 45px rgba(0,0,0,.22);
+  transition: transform .25s ease, border-color .25s ease;
+}
+
+.xwall-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255,255,255,.18);
+}
+
+.xwall-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 20px;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.xwall-label {
+  color: #e9b7c8;
+}
+
+.xwall-date {
+  opacity: .45;
+}
+
+.xwall-card h3 {
+  margin-bottom: 12px;
+  letter-spacing: 1.5px;
+}
+
+.xwall-card p {
+  line-height: 1.8;
+  opacity: .78;
+}
+</style>
+\n</head>
 
 <body>
 <header>
@@ -1114,12 +1158,26 @@ async function loadStories(){
     return;
   }
 
-  wall.innerHTML = data.map(item => `
-    <div class="choice">
-      <h3>${escapeHTML(item.name).toUpperCase()}</h3>
-      <p>“${escapeHTML(item.story)}”</p>
-    </div>
-  `).join("");
+  wall.innerHTML = data.map(item => {
+    const date = item.created_at
+      ? new Date(item.created_at).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric"
+        })
+      : "";
+
+    return `
+      <article class="xwall-card">
+        <div class="xwall-card-top">
+          <span class="xwall-label">X WALL</span>
+          <span class="xwall-date">${date}</span>
+        </div>
+        <h3>${escapeHTML(item.name).toUpperCase()}</h3>
+        <p>“${escapeHTML(item.story)}”</p>
+      </article>
+    `;
+  }).join("");
 }
 
 function escapeHTML(value){
