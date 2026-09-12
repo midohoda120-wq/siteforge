@@ -148,9 +148,16 @@ h1 span,.section-title span,.join-title span{color:#a8325e}
 .vote-choice-number{
   display:block;
   color:#6f5862;
-  font-size:9px;
-  letter-spacing:3px;
-  margin-bottom:18px;
+  font-size:8px;
+  letter-spacing:4px;
+  margin-bottom:22px;
+  text-transform:uppercase;
+  transition:.5s ease;
+}
+
+.vote-option.selected .vote-choice-number{
+  color:#a8325e;
+  letter-spacing:5px;
 }
 
 .vote-choice-message{
@@ -188,50 +195,7 @@ h1 span,.section-title span,.join-title span{color:#a8325e}
   display:none;
 }
 
-.vote-option .vote-result{
-  position:absolute;
-  left:35px;
-  right:35px;
-  bottom:18px;
-  margin:0;
-  opacity:.35;
-  transition:.4s ease;
-}
 
-.vote-option.selected .vote-result{
-  opacity:.7;
-}
-
-.vote-result{
-  margin-top:20px;
-}
-
-.vote-bar{
-  width:100%;
-  height:2px;
-  background:#24151c;
-  border-radius:10px;
-  overflow:hidden;
-  margin:8px 0 18px;
-}
-
-.vote-bar span{
-  display:block;
-  height:100%;
-  background:#a8325e;
-  transition:width .8s cubic-bezier(.22,1,.36,1);
-}
-
-.vote-result strong{
-  color:#776a70;
-  font-size:8px;
-  letter-spacing:2px;
-  font-weight:500;
-}
-
-#vote-results{
-  display:none;
-}
 
 .social-luxury{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:45px}
 .social-card{display:flex;align-items:center;gap:16px;padding:22px;background:linear-gradient(145deg,#151015,#0b090a);border:1px solid #35202a;border-radius:10px;color:#fff;text-decoration:none;transition:.3s}
@@ -761,7 +725,7 @@ header{position:fixed;height:70px;padding:0 18px}.logo{font-size:19px;letter-spa
   <div class="choices" id="vote-choices">
 
     <div class="choice vote-option" data-vote="back">
-      <span class="vote-choice-number">01 — THE PAST</span>
+      <span class="vote-choice-number">THE PAST</span>
       <h3>GO BACK</h3>
       <p>Give the past another chance.</p>
       <button class="vote-btn" data-vote="back" type="button">MAKE YOUR CHOICE</button>
@@ -772,7 +736,7 @@ header{position:fixed;height:70px;padding:0 18px}.logo{font-size:19px;letter-spa
     </div>
 
     <div class="choice vote-option" data-vote="new">
-      <span class="vote-choice-number">02 — THE FUTURE</span>
+      <span class="vote-choice-number">THE FUTURE</span>
       <h3>CHOOSE NEW</h3>
       <p>Leave the past behind and start again.</p>
       <button class="vote-btn" data-vote="new" type="button">MAKE YOUR CHOICE</button>
@@ -783,7 +747,7 @@ header{position:fixed;height:70px;padding:0 18px}.logo{font-size:19px;letter-spa
     </div>
 
     <div class="choice vote-option" data-vote="self">
-      <span class="vote-choice-number">03 — YOURSELF</span>
+      <span class="vote-choice-number">YOURSELF</span>
       <h3>CHOOSE YOURSELF</h3>
       <p>Put yourself first.</p>
       <button class="vote-btn" data-vote="self" type="button">MAKE YOUR CHOICE</button>
@@ -1029,23 +993,6 @@ function renderVotes(){
 
     const oldResult = option.querySelector(".vote-result");
     if(oldResult) oldResult.remove();
-
-    if(total){
-      const pct = Math.round(
-        voteCounts[key] / total * 100
-      );
-
-      const result = document.createElement("div");
-      result.className = "vote-result";
-      result.innerHTML = `
-        <strong>${pct}%</strong>
-        <div class="vote-bar">
-          <span style="width:${pct}%"></span>
-        </div>
-      `;
-
-      option.appendChild(result);
-    }
   });
 }
 
