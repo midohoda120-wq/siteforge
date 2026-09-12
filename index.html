@@ -684,6 +684,74 @@ header{position:fixed;height:70px;padding:0 18px}.logo{font-size:19px;letter-spa
   opacity: .78;
 }
 </style>
+
+<style>
+.episode-watch-btn{
+  margin-top:18px;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:13px 22px;
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:999px;
+  background:linear-gradient(135deg,#4A102A,#7a1f49);
+  color:#fff;
+  font-weight:700;
+  letter-spacing:1.5px;
+  cursor:pointer;
+  transition:.25s ease;
+  box-shadow:0 8px 25px rgba(0,0,0,.3);
+}
+.episode-watch-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 30px rgba(0,0,0,.45);
+}
+#episodePlayerModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:rgba(0,0,0,.88);
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+#episodePlayerBox{
+  width:min(950px,100%);
+  background:#101010;
+  border:1px solid #333;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 25px 80px rgba(0,0,0,.7);
+}
+#episodePlayerTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 20px;
+  border-bottom:1px solid #292929;
+}
+#episodePlayerTitle{
+  font-weight:700;
+  letter-spacing:1px;
+}
+#episodePlayerClose{
+  background:none;
+  border:0;
+  color:#fff;
+  font-size:28px;
+  cursor:pointer;
+}
+#episodeVideoPlayer,
+#episodeYoutubePlayer{
+  display:none;
+  width:100%;
+  aspect-ratio:16/9;
+  background:#000;
+  border:0;
+}
+</style>
+
 </head>
 
 <body>
@@ -1422,15 +1490,14 @@ loadD1Content();
 <script>
 async function loadEpisodesFromD1(){
   try{
-    const response = await fetch("/api/content");
-    const data = await response.json();
+    const response=await fetch("/api/content");
+    const data=await response.json();
 
-    const container = document.querySelector(".episodes");
+    const container=document.querySelector(".episodes");
     if(!container || !data.episodes) return;
+    if(data.episodes.length===0) return;
 
-    if(data.episodes.length === 0) return;
-
-    container.innerHTML = data.episodes.map(ep => `
+    container.innerHTML=data.episodes.map(ep=>`
       <article class="episode">
         <div class="episode-image">
           ${ep.image_url ? `<img src="${ep.image_url}" alt="${ep.title || 'Episode'}">` : ""}
@@ -1439,13 +1506,62 @@ async function loadEpisodesFromD1(){
           <span>SEASON ${ep.season || 1} · EPISODE ${ep.episode_number || 1}</span>
           <h3>${ep.title || ""}</h3>
           <p>${ep.description || ""}</p>
+          ${ep.video_url ? `
+            <button class="episode-watch-btn" type="button"
+              onclick='openEpisodePlayer(${JSON.stringify(ep.video_url)}, ${JSON.stringify(ep.title || "EPISODE")})'>
+              <span>▶</span> WATCH EPISODE
+            </button>
+          ` : ""}
         </div>
       </article>
     `).join("");
   }catch(error){
-    console.error("Episodes D1 error:", error);
+    console.error("Episodes D1 error:",error);
   }
 }
+
+function openEpisodePlayer(url,title){
+  const modal=document.getElementById("episodePlayerModal");
+  const video=document.getElementById("episodeVideoPlayer");
+  const youtube=document.getElementById("episodeYoutubePlayer");
+  const titleBox=document.getElementById("episodePlayerTitle");
+
+  titleBox.textContent=title || "EPISODE";
+  video.pause();
+  video.removeAttribute("src");
+  youtube.removeAttribute("src");
+
+  const match=url.match(/(?:youtube\\.com\\/watch\\?v=|youtu\\.be\\/|youtube\\.com\\/embed\\/)([A-Za-z0-9_-]{11})/);
+
+  if(match){
+    youtube.src="https://www.youtube.com/embed/"+match[1]+"?autoplay=1&rel=0";
+    youtube.style.display="block";
+    video.style.display="none";
+  }else{
+    video.src=url;
+    video.style.display="block";
+    youtube.style.display="none";
+    video.load();
+    video.play().catch(()=>{});
+  }
+
+  modal.style.display="flex";
+}
+
+function closeEpisodePlayer(){
+  const modal=document.getElementById("episodePlayerModal");
+  const video=document.getElementById("episodeVideoPlayer");
+  const youtube=document.getElementById("episodeYoutubePlayer");
+
+  video.pause();
+  video.removeAttribute("src");
+  youtube.removeAttribute("src");
+  modal.style.display="none";
+}
+
+document.getElementById("episodePlayerModal")?.addEventListener("click",function(e){
+  if(e.target===this) closeEpisodePlayer();
+});
 
 loadEpisodesFromD1();
 </script>
