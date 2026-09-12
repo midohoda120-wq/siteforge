@@ -20,7 +20,7 @@ button.gray{background:#222;border-color:#444}button.red{background:#551b1b;bord
 <div id="login" class="box login">
 <h2>BACK TO X — ADMIN</h2>
 <input id="pass" type="password" placeholder="Admin Password">
-<div class="actions"><button onclick="login()">LOGIN</button></div>
+<div class="actions"><button onclick="doLogin()">LOGIN</button></div>
 <div id="msg"></div>
 </div>
 
@@ -76,7 +76,7 @@ button.gray{background:#222;border-color:#444}button.red{background:#551b1b;bord
 const API="/api/content";let D={};
 const esc=x=>String(x??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
 
-async function login(){
+async function doLogin(){
 const r=await fetch("/api/admin",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"login",password:pass.value})});
 const x=await r.json();if(x.success){login.classList.add("hide");app.classList.remove("hide");load()}else msg.textContent=x.error||"Login failed";
 }
