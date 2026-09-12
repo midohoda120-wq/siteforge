@@ -55,8 +55,8 @@ export async function onRequest(context) {
     if (data.action === "addEpisode") {
       await env.DB.prepare(`
         INSERT INTO episodes
-        (season, episode_number, title, description, video_url, image_url)
-        VALUES (?, ?, ?, ?, ?, ?)
+        (season, episode_number, title, description, video_url, image_url, published)
+        VALUES (?, ?, ?, ?, ?, ?, 1)
       `)
       .bind(
         data.season || 1,
