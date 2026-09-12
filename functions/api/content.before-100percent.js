@@ -248,7 +248,7 @@ export async function onRequest(context) {
 
       if (!image && d.video_url) {
         const m = d.video_url.match(
-          /(?:youtube\\.com\\/watch\\?v=|youtu\\.be\\/|youtube\\.com\\/embed\\/)([A-Za-z0-9_-]{11})/
+          /(?:youtube.com\/watch\?v=|youtu.be\/|youtube.com\/embed\/)([A-Za-z0-9_-]{11})/
         );
         if (m)
           image = `https://img.youtube.com/vi/${m[1]}/maxresdefault.jpg`;
