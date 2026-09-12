@@ -377,5 +377,35 @@ function closeVideo(){
 }
 </script>
 
+
+<style>
+#adminVideoPlayer{display:none;margin-top:18px;background:#080808;border:1px solid #333;border-radius:16px;overflow:hidden}
+#adminVideoPlayer video{display:block;width:100%;max-height:420px;background:#000}
+#adminVideoPlayer .player-title{padding:12px 16px;font-weight:bold}
+</style>
+
+<div id="adminVideoPlayer">
+  <video id="adminVideo" controls playsinline></video>
+  <div class="player-title">EPISODE PREVIEW</div>
+</div>
+
+<script>
+function previewEpisode(){
+  const url=document.getElementById("episodeVideo").value.trim();
+  const player=document.getElementById("adminVideoPlayer");
+  const video=document.getElementById("adminVideo");
+
+  if(!url){
+    alert("Enter a Video URL first.");
+    return;
+  }
+
+  video.src=url;
+  player.style.display="block";
+  video.load();
+  video.play().catch(()=>{});
+}
+</script>
+
 </body>
 </html>
