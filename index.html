@@ -65,8 +65,174 @@ h1 span,.section-title span,.join-title span{color:#a8325e}
 .cast-image{height:420px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#20151a,#050505)}
 .cast-placeholder{text-align:center;font-size:32px;font-weight:800;letter-spacing:6px;color:#aaa}
 .cast-info{padding:25px}.cast-label{font-size:10px;letter-spacing:3px;color:#b84a70}.cast-info h3{margin:10px 0}.cast-info p{color:#999}
-.vote-btn{margin-top:10px;padding:12px 22px;border:1px solid #6d2340;background:#8d2349;color:#fff;border-radius:6px;font-weight:bold;cursor:pointer}
-.vote-result{margin-top:20px}.vote-bar{width:100%;height:6px;background:#24151c;border-radius:10px;overflow:hidden;margin:8px 0 18px}.vote-bar span{display:block;height:100%;background:#a8325e;transition:width .6s ease}
+/* CINEMATIC VOTING */
+.vote-btn{
+  margin-top:28px;
+  padding:0;
+  border:0;
+  background:none;
+  color:#777;
+  font-size:9px;
+  letter-spacing:3px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.35s ease;
+}
+
+.vote-btn:hover{
+  color:#fff;
+  letter-spacing:4px;
+}
+
+.vote-option{
+  position:relative;
+  min-height:260px;
+  overflow:hidden;
+  cursor:pointer;
+  transition:
+    opacity .55s ease,
+    transform .55s ease,
+    border-color .55s ease,
+    box-shadow .55s ease,
+    background .55s ease;
+}
+
+.vote-option:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(
+    circle at 50% 0%,
+    rgba(168,50,94,.16),
+    transparent 55%
+  );
+  opacity:0;
+  transition:.55s ease;
+  pointer-events:none;
+}
+
+.vote-option:hover{
+  transform:translateY(-6px);
+  border-color:#63213b;
+}
+
+.vote-option:hover:before{
+  opacity:1;
+}
+
+.vote-option.selected{
+  border-color:#a8325e;
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(168,50,94,.22),
+      transparent 65%
+    ),
+    #130b10;
+  box-shadow:
+    0 25px 70px rgba(0,0,0,.5),
+    0 0 45px rgba(168,50,94,.08);
+  transform:translateY(-8px);
+}
+
+.vote-option.dimmed{
+  opacity:.24;
+  transform:scale(.97);
+  filter:saturate(.45);
+}
+
+.vote-option.selected .vote-btn{
+  color:#e9b7c8;
+}
+
+.vote-choice-number{
+  display:block;
+  color:#6f5862;
+  font-size:9px;
+  letter-spacing:3px;
+  margin-bottom:18px;
+}
+
+.vote-choice-message{
+  margin-top:25px;
+  min-height:40px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:7px;
+  opacity:0;
+  transform:translateY(10px);
+  transition:.5s ease;
+}
+
+.vote-option.selected .vote-choice-message{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.vote-choice-message strong{
+  color:#fff;
+  font-size:15px;
+  letter-spacing:2px;
+  font-weight:700;
+}
+
+.vote-choice-message span{
+  color:#806d75;
+  font-size:10px;
+  letter-spacing:1px;
+  line-height:1.6;
+}
+
+.vote-option.selected .vote-btn{
+  display:none;
+}
+
+.vote-option .vote-result{
+  position:absolute;
+  left:35px;
+  right:35px;
+  bottom:18px;
+  margin:0;
+  opacity:.35;
+  transition:.4s ease;
+}
+
+.vote-option.selected .vote-result{
+  opacity:.7;
+}
+
+.vote-result{
+  margin-top:20px;
+}
+
+.vote-bar{
+  width:100%;
+  height:2px;
+  background:#24151c;
+  border-radius:10px;
+  overflow:hidden;
+  margin:8px 0 18px;
+}
+
+.vote-bar span{
+  display:block;
+  height:100%;
+  background:#a8325e;
+  transition:width .8s cubic-bezier(.22,1,.36,1);
+}
+
+.vote-result strong{
+  color:#776a70;
+  font-size:8px;
+  letter-spacing:2px;
+  font-weight:500;
+}
+
+#vote-results{
+  display:none;
+}
+
 .social-luxury{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:45px}
 .social-card{display:flex;align-items:center;gap:16px;padding:22px;background:linear-gradient(145deg,#151015,#0b090a);border:1px solid #35202a;border-radius:10px;color:#fff;text-decoration:none;transition:.3s}
 .social-card:hover{border-color:#8d2349;transform:translateY(-4px)}
@@ -592,10 +758,41 @@ header{position:fixed;height:70px;padding:0 18px}.logo{font-size:19px;letter-spa
 <section class="section" id="voting">
   <h2 class="section-title">MAKE THE <span>CHOICE.</span></h2>
   <p class="intro">If you were in their place, what would you choose?</p>
-  <div class="choices">
-    <div class="choice vote-option"><h3>GO BACK</h3><p>Give the past another chance.</p><button class="vote-btn" data-vote="back" type="button">VOTE</button></div>
-    <div class="choice vote-option"><h3>CHOOSE NEW</h3><p>Leave the past behind and start again.</p><button class="vote-btn" data-vote="new" type="button">VOTE</button></div>
-    <div class="choice vote-option"><h3>CHOOSE YOURSELF</h3><p>Put yourself first.</p><button class="vote-btn" data-vote="self" type="button">VOTE</button></div>
+  <div class="choices" id="vote-choices">
+
+    <div class="choice vote-option" data-vote="back">
+      <span class="vote-choice-number">01 — THE PAST</span>
+      <h3>GO BACK</h3>
+      <p>Give the past another chance.</p>
+      <button class="vote-btn" data-vote="back" type="button">MAKE YOUR CHOICE</button>
+      <div class="vote-choice-message">
+        <strong>YOU CHOSE X</strong>
+        <span>Some stories deserve another chapter.</span>
+      </div>
+    </div>
+
+    <div class="choice vote-option" data-vote="new">
+      <span class="vote-choice-number">02 — THE FUTURE</span>
+      <h3>CHOOSE NEW</h3>
+      <p>Leave the past behind and start again.</p>
+      <button class="vote-btn" data-vote="new" type="button">MAKE YOUR CHOICE</button>
+      <div class="vote-choice-message">
+        <strong>YOU CHOSE NEW</strong>
+        <span>Sometimes the next story is the right one.</span>
+      </div>
+    </div>
+
+    <div class="choice vote-option" data-vote="self">
+      <span class="vote-choice-number">03 — YOURSELF</span>
+      <h3>CHOOSE YOURSELF</h3>
+      <p>Put yourself first.</p>
+      <button class="vote-btn" data-vote="self" type="button">MAKE YOUR CHOICE</button>
+      <div class="vote-choice-message">
+        <strong>YOU CHOSE YOURSELF</strong>
+        <span>The strongest choice can be walking away.</span>
+      </div>
+    </div>
+
   </div>
   <div id="vote-results"></div>
 </section>
@@ -804,26 +1001,90 @@ $("#apply-form")?.addEventListener("submit", async (e) => {
 });
 
 const voteCounts = {back:0,new:0,self:0};
+let selectedVote = localStorage.getItem("back_to_x_selected") || "";
+
 try {
-  const saved = JSON.parse(localStorage.getItem("back_to_x_votes") || "{}");
+  const saved = JSON.parse(
+    localStorage.getItem("back_to_x_votes") || "{}"
+  );
   Object.assign(voteCounts, saved);
 } catch {}
+
 function renderVotes(){
-  const total = Object.values(voteCounts).reduce((a,b)=>a+b,0);
-  const labels = {back:"GO BACK",new:"CHOOSE NEW",self:"CHOOSE YOURSELF"};
-  $("#vote-results").innerHTML = Object.entries(voteCounts).map(([key,val]) => {
-    const pct = total ? Math.round(val/total*100) : 0;
-    return `<div class="vote-result"><strong>${labels[key]} — ${pct}%</strong><div class="vote-bar"><span style="width:${pct}%"></span></div></div>`;
-  }).join("");
+  const total = Object.values(voteCounts)
+    .reduce((a,b)=>a+b,0);
+
+  $$(".vote-option").forEach(option => {
+    const key = option.dataset.vote;
+
+    option.classList.toggle(
+      "selected",
+      selectedVote === key
+    );
+
+    option.classList.toggle(
+      "dimmed",
+      selectedVote && selectedVote !== key
+    );
+
+    const oldResult = option.querySelector(".vote-result");
+    if(oldResult) oldResult.remove();
+
+    if(total){
+      const pct = Math.round(
+        voteCounts[key] / total * 100
+      );
+
+      const result = document.createElement("div");
+      result.className = "vote-result";
+      result.innerHTML = `
+        <strong>${pct}%</strong>
+        <div class="vote-bar">
+          <span style="width:${pct}%"></span>
+        </div>
+      `;
+
+      option.appendChild(result);
+    }
+  });
 }
+
 renderVotes();
-$$(".vote-btn").forEach(btn => btn.addEventListener("click", async () => {
-  const choice = btn.dataset.vote;
-  if(!voteCounts.hasOwnProperty(choice)) return;
-  voteCounts[choice]++;
-  localStorage.setItem("back_to_x_votes", JSON.stringify(voteCounts));
-  renderVotes();
-}));
+
+$$(".vote-btn").forEach(btn => {
+  btn.addEventListener("click", e => {
+    e.stopPropagation();
+
+    const choice = btn.dataset.vote;
+
+    if(!voteCounts.hasOwnProperty(choice)) return;
+
+    if(selectedVote) return;
+
+    selectedVote = choice;
+
+    voteCounts[choice]++;
+
+    localStorage.setItem(
+      "back_to_x_votes",
+      JSON.stringify(voteCounts)
+    );
+
+    localStorage.setItem(
+      "back_to_x_selected",
+      selectedVote
+    );
+
+    renderVotes();
+  });
+});
+
+$$(".vote-option").forEach(option => {
+  option.addEventListener("click", () => {
+    const btn = option.querySelector(".vote-btn");
+    if(btn) btn.click();
+  });
+});
 
 // Keep the client initialized and ready for the real Supabase tables/RLS integration.
 window.backToXSupabase = supabase;
