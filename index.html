@@ -1191,51 +1191,47 @@ async function loadStories(){
   const wall = $("#xwall-list");
   if(!wall) return;
 
-  const {data,error} = await supabase
-    .from("stories")
-    .select("name,story,created_at")
-    .order("created_at",{ascending:false})
-    .limit(12);
+  try{
+    const response = await fetch("/api/content");
+    const data = await response.json();
 
-  if(error){
-    console.error("X Wall error:",error);
-    wall.innerHTML = `
-      <div class="choice">
-        <h3>THE X WALL</h3>
-        <p>Stories will appear here soon.</p>
-      </div>`;
-    return;
+    const stories = (data.stories || [])
+      .filter(item => item.status === "approved")
+      .slice(0, 12);
+
+    if(!stories.length){
+      wall.innerHTML = `
+        <div class="choice">
+          <h3>YOUR STORY COULD BE HERE.</h3>
+          <p>Share your unfinished story and become part of the X Wall.</p>
+        </div>`;
+      return;
+    }
+
+    wall.innerHTML = stories.map(item => {
+      const date = item.created_at
+        ? new Date(item.created_at).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+          })
+        : "";
+
+      return `
+        <article class="xwall-card">
+          <div class="xwall-card-top">
+            <span class="xwall-label">X WALL</span>
+            <span class="xwall-date">${date}</span>
+          </div>
+          <h3>${escapeHTML(item.author_name || "ANONYMOUS").toUpperCase()}</h3>
+          <p>“${escapeHTML(item.story || "")}”</p>
+        </article>
+      `;
+    }).join("");
+
+  }catch(error){
+    console.error("X Wall D1 error:", error);
   }
-
-  if(!data || !data.length){
-    wall.innerHTML = `
-      <div class="choice">
-        <h3>YOUR STORY COULD BE HERE.</h3>
-        <p>Share your unfinished story and become part of the X Wall.</p>
-      </div>`;
-    return;
-  }
-
-  wall.innerHTML = data.map(item => {
-    const date = item.created_at
-      ? new Date(item.created_at).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric"
-        })
-      : "";
-
-    return `
-      <article class="xwall-card">
-        <div class="xwall-card-top">
-          <span class="xwall-label">X WALL</span>
-          <span class="xwall-date">${date}</span>
-        </div>
-        <h3>${escapeHTML(item.name).toUpperCase()}</h3>
-        <p>“${escapeHTML(item.story)}”</p>
-      </article>
-    `;
-  }).join("");
 }
 
 function escapeHTML(value){
