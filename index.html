@@ -282,10 +282,31 @@ $("#cast-card")?.addEventListener("click", () => {
 
 $("#apply-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
+
   const msg = $("#form-message");
-  msg.textContent = "APPLICATION RECEIVED ✓";
-  msg.style.cssText = "margin-top:10px;color:#e9b7c8;";
-  e.target.reset();
+  const name = $("#app-name").value;
+  const email = $("#app-email").value;
+  const story = $("#app-story").value;
+
+  msg.textContent = "SENDING...";
+
+  try {
+    await fetch("https://script.google.com/macros/s/AKfycbxU2warqN4YOSp9I8iGG9epVrmTXG7aRjiud9pg2CHgRkCy9yPNLBseCICm06oazKDx/exec", {
+      method: "POST",
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        story: story
+      })
+    });
+
+    msg.textContent = "APPLICATION RECEIVED ✓";
+    msg.style.cssText = "margin-top:10px;color:#e9b7c8;";
+    e.target.reset();
+
+  } catch (error) {
+    msg.textContent = "SOMETHING WENT WRONG. PLEASE TRY AGAIN.";
+  }
 });
 
 const voteCounts = {back:0,new:0,self:0};
