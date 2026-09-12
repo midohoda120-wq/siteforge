@@ -1526,27 +1526,30 @@ function openEpisodePlayer(url,title){
   const youtube=document.getElementById("episodeYoutubePlayer");
   const titleBox=document.getElementById("episodePlayerTitle");
 
+  if(!modal || !video || !youtube) return;
+
   titleBox.textContent=title || "EPISODE";
+
   video.pause();
   video.removeAttribute("src");
   youtube.removeAttribute("src");
 
-  const match=url.match(/(?:youtube\\.com\\/watch\\?v=|youtu\\.be\\/|youtube\\.com\\/embed\\/)([A-Za-z0-9_-]{11})/);
+  const match=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/);
 
   if(match){
-    youtube.src="https://www.youtube.com/embed/"+match[1]+"?autoplay=1&rel=0";
-    youtube.style.display="block";
     video.style.display="none";
+    youtube.style.display="block";
+    youtube.src="https://www.youtube.com/embed/"+match[1]+"?autoplay=1&rel=0&playsinline=1";
   }else{
-    video.src=url;
-    video.style.display="block";
     youtube.style.display="none";
+    video.style.display="block";
+    video.src=url;
     video.load();
-    video.play().catch(()=>{});
   }
 
   modal.style.display="flex";
 }
+
 
 function closeEpisodePlayer(){
   const modal=document.getElementById("episodePlayerModal");
