@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://midohoda120-wq.github.io/siteforge/sitemap.xml
