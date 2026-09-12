@@ -1,115 +1,434 @@
 <!doctype html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BACK TO X ADMIN</title>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BACK TO X — ADMIN</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#080808;color:#eee;font-family:Arial,sans-serif}
-header{background:#0d0d0d;border-bottom:1px solid #292929;padding:18px 22px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between}
-.logo{font-weight:900;letter-spacing:3px}.ok{color:#75e6a0;font-size:12px}
-main{max-width:1200px;margin:auto;padding:20px 14px 60px}.box{background:#111;border:1px solid #292929;border-radius:18px;padding:20px;margin-bottom:16px}
-h2{margin:0 0 16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}
-input,textarea,select{width:100%;background:#080808;color:#fff;border:1px solid #333;border-radius:9px;padding:12px}
-textarea{min-height:90px}button{background:#4A102A;color:#fff;border:1px solid #713452;border-radius:9px;padding:10px 15px;font-weight:bold}
-button.gray{background:#222;border-color:#444}button.red{background:#551b1b;border-color:#853333}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.list{display:grid;gap:9px;margin-top:16px}
-.item{background:#090909;border:1px solid #292929;border-radius:12px;padding:13px}.muted{color:#999;font-size:12px}
-.login{max-width:400px;margin:100px auto}.hide{display:none!important}
-@media(max-width:650px){.grid{grid-template-columns:1fr}.full{grid-column:auto}}
-</style></head>
+*{box-sizing:border-box}
+body{margin:0;background:#080808;color:#eee;font-family:Arial,sans-serif}
+header{padding:22px 20px;border-bottom:1px solid #292929;position:sticky;top:0;background:#080808;z-index:10}
+.logo{font-size:22px;font-weight:800;letter-spacing:2px}
+main{max-width:1200px;margin:auto;padding:25px 16px 70px}
+.panel{border:1px solid #292929;border-radius:16px;padding:20px;margin-bottom:18px;background:#101010}
+h2{margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+input,textarea,select{width:100%;background:#070707;border:1px solid #333;color:#fff;border-radius:10px;padding:12px;margin:5px 0 10px}
+textarea{min-height:100px;resize:vertical}
+button{border:0;border-radius:10px;padding:11px 15px;background:#4A102A;color:#fff;cursor:pointer;margin:4px}
+button.secondary{background:#292929}
+button.danger{background:#651b1b}
+.item{border-top:1px solid #292929;padding:14px 0}
+.small{font-size:12px;color:#aaa}
+#login{max-width:420px;margin:15vh auto;padding:20px}
+.hidden{display:none}
+.status{margin:10px 0;color:#e9b7c8}
+</style>
+</head>
 <body>
 
-<div id="login" class="box login">
-<h2>BACK TO X — ADMIN</h2>
-<input id="pass" type="password" placeholder="Admin Password">
-<div class="actions"><button onclick="doLogin()">LOGIN</button></div>
-<div id="msg"></div>
+<div id="login" class="panel">
+  <h2>BACK TO X ADMIN</h2>
+  <p class="small">Secure administrator access.</p>
+  <input id="password" type="password" placeholder="ADMIN PASSWORD">
+  <button onclick="doLogin()">ENTER ADMIN</button>
+  <p id="loginMsg" class="status"></p>
 </div>
 
-<div id="app" class="hide">
-<header><div class="logo">BACK TO X</div><div id="state" class="ok">CONNECTED</div></header>
+<div id="app" class="hidden">
+<header>
+  <div class="logo">BACK TO X / ADMIN</div>
+</header>
+
 <main>
 
-<div class="box"><h2>HERO & BRAND</h2>
+<section class="panel">
+<h2>HERO & BRAND</h2>
 <div class="grid">
-<input id="heroTitle" class="full" placeholder="Hero title">
-<textarea id="heroSubtitle" class="full" placeholder="Hero subtitle"></textarea>
-<input id="primary" placeholder="Primary color">
-<input id="secondary" placeholder="Secondary color">
-<input id="font" class="full" placeholder="Font family">
-</div><div class="actions"><button onclick="saveHero()">SAVE HERO</button></div></div>
-
-<div class="box"><h2>EPISODES</h2>
-<div class="grid">
-<input id="eid" type="hidden"><input id="season" type="number" value="1" placeholder="Season">
-<input id="number" type="number" value="1" placeholder="Episode number">
-<input id="title" class="full" placeholder="Episode title">
-<textarea id="desc" class="full" placeholder="Description"></textarea>
-<input id="video" class="full" placeholder="YouTube URL or MP4 URL">
-<input id="image" class="full" placeholder="Image URL (optional)">
+<input id="hero_title" placeholder="Hero title">
+<input id="hero_subtitle" placeholder="Hero subtitle">
+<input id="primary_color" placeholder="#4A102A">
+<input id="secondary_color" placeholder="#0B0B0B">
+<input id="font_family" placeholder="Montserrat, sans-serif">
 </div>
-<div class="actions"><button onclick="saveEpisode()">SAVE EPISODE</button><button class="gray" onclick="newEpisode()">NEW</button></div>
-<div id="episodeList" class="list"></div></div>
+<button onclick="saveHero()">SAVE HERO</button>
+</section>
 
-<div class="box"><h2>CAST</h2>
+<section class="panel">
+<h2>SITE CONTENT</h2>
+<p class="small">Control text and configurable values throughout the site.</p>
 <div class="grid">
-<input id="cid" type="hidden"><input id="cname" placeholder="Name"><input id="crole" placeholder="Role">
-<textarea id="cbio" class="full" placeholder="Bio"></textarea><input id="cimage" class="full" placeholder="Image URL">
-<input id="cseason" type="number" value="1" placeholder="Season">
-</div><div class="actions"><button onclick="saveCast()">SAVE CAST</button><button class="gray" onclick="newCast()">NEW</button></div>
-<div id="castList" class="list"></div></div>
+<input id="c_section" placeholder="Section e.g. concept">
+<input id="c_key" placeholder="Key e.g. title">
+<select id="c_type">
+<option value="text">Text</option>
+<option value="html">HTML</option>
+<option value="url">URL</option>
+</select>
+<input id="c_order" type="number" placeholder="Order">
+</div>
+<textarea id="c_value" placeholder="Content value"></textarea>
+<button onclick="saveContent()">SAVE CONTENT</button>
+<div id="contentList"></div>
+</section>
 
-<div class="box"><h2>X WALL / STORIES</h2>
+<section class="panel">
+<h2>LINKS / NAVIGATION / SOCIAL</h2>
 <div class="grid">
-<input id="sid" type="hidden"><input id="author" placeholder="Author">
-<textarea id="story" class="full" placeholder="Story"></textarea><input id="simage" placeholder="Image URL">
-<select id="sstatus"><option>approved</option><option>pending</option><option>rejected</option></select>
-</div><div class="actions"><button onclick="saveStory()">SAVE STORY</button><button class="gray" onclick="newStory()">NEW</button></div>
-<div id="storyList" class="list"></div></div>
+<input id="l_label" placeholder="Label">
+<input id="l_url" placeholder="URL">
+<select id="l_location">
+<option value="social">social</option>
+<option value="nav">nav</option>
+<option value="footer">footer</option>
+<option value="button">button</option>
+</select>
+<input id="l_order" type="number" placeholder="Order">
+</div>
+<button onclick="saveLink()">SAVE LINK</button>
+<div id="linkList"></div>
+</section>
 
-<div class="box"><h2>MESSAGES</h2>
-<textarea id="message" placeholder="Message"></textarea><input id="mid" type="hidden">
-<div class="actions"><button onclick="saveMessage()">SAVE MESSAGE</button><button class="gray" onclick="newMessage()">NEW</button></div>
-<div id="messageList" class="list"></div></div>
+<section class="panel">
+<h2>MEDIA</h2>
+<div class="grid">
+<input id="m_title" placeholder="Media title">
+<input id="m_url" placeholder="Image / video URL">
+<select id="m_type">
+<option value="image">image</option>
+<option value="video">video</option>
+</select>
+<input id="m_section" placeholder="Section">
+<input id="m_order" type="number" placeholder="Order">
+</div>
+<button onclick="saveMedia()">SAVE MEDIA</button>
+<div id="mediaList"></div>
+</section>
 
-</main></div>
+<section class="panel">
+<h2>EPISODES</h2>
+<div class="grid">
+<input id="e_season" type="number" value="1" placeholder="Season">
+<input id="e_number" type="number" value="1" placeholder="Episode">
+<input id="e_title" placeholder="Title">
+<input id="e_video" placeholder="Video URL">
+<input id="e_image" placeholder="Image URL — leave blank for YouTube auto thumbnail">
+</div>
+<textarea id="e_desc" placeholder="Description"></textarea>
+<button onclick="saveEpisode()">ADD EPISODE</button>
+<div id="episodeList"></div>
+</section>
+
+<section class="panel">
+<h2>CAST</h2>
+<div class="grid">
+<input id="cast_name" placeholder="Name">
+<input id="cast_role" placeholder="Role">
+<input id="cast_image" placeholder="Image URL">
+<input id="cast_season" type="number" value="1" placeholder="Season">
+</div>
+<textarea id="cast_bio" placeholder="Bio"></textarea>
+<button onclick="saveCast()">ADD CAST MEMBER</button>
+<div id="castList"></div>
+</section>
+
+<section class="panel">
+<h2>X WALL / STORIES</h2>
+<div class="grid">
+<input id="s_author" placeholder="Author">
+<input id="s_image" placeholder="Image URL">
+<select id="s_status">
+<option value="approved">approved</option>
+<option value="pending">pending</option>
+<option value="rejected">rejected</option>
+</select>
+</div>
+<textarea id="s_story" placeholder="Story"></textarea>
+<button onclick="saveStory()">ADD STORY</button>
+<div id="storyList"></div>
+</section>
+
+<section class="panel">
+<h2>MESSAGES</h2>
+<textarea id="messageText" placeholder="Message"></textarea>
+<button onclick="saveMessage()">ADD MESSAGE</button>
+<div id="messageList"></div>
+</section>
+
+<section class="panel">
+<h2>VOTING OPTIONS</h2>
+<div class="grid">
+<input id="v_key" placeholder="choice key e.g. back">
+<input id="v_label" placeholder="Label e.g. THE PAST">
+<input id="v_title" placeholder="Title e.g. GO BACK">
+<input id="v_order" type="number" placeholder="Order">
+</div>
+<textarea id="v_desc" placeholder="Description"></textarea>
+<input id="v_msg_title" placeholder="Message title">
+<input id="v_msg_text" placeholder="Message text">
+<button onclick="saveVoteOption()">SAVE VOTE OPTION</button>
+<div id="voteOptionList"></div>
+</section>
+
+<section class="panel">
+<h2>APPLICATIONS</h2>
+<div id="applicationList"></div>
+</section>
+
+<section class="panel">
+<h2>VOTE RESULTS</h2>
+<div id="voteResults"></div>
+</section>
+
+</main>
+</div>
 
 <script>
-const API="/api/content";let D={};
-const esc=x=>String(x??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+let DATA={};
+
+async function api(body){
+  const r=await fetch("/api/content",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(body)
+  });
+  const d=await r.json();
+  if(!r.ok || d.error) throw new Error(d.error||"Request failed");
+  return d;
+}
 
 async function doLogin(){
-const r=await fetch("/api/admin",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"login",password:pass.value})});
-const x=await r.json();if(x.success){login.classList.add("hide");app.classList.remove("hide");load()}else msg.textContent=x.error||"Login failed";
+  const password=document.getElementById("password").value;
+  const msg=document.getElementById("loginMsg");
+  msg.textContent="CHECKING...";
+  const r=await fetch("/api/admin",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({action:"login",password})
+  });
+  const d=await r.json();
+  if(!r.ok || !d.success){
+    msg.textContent=d.error||"Wrong password";
+    return;
+  }
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  load();
 }
-async function post(x){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(x)});return r.json()}
+
 async function load(){
-const r=await fetch(API);D=await r.json();state.textContent="CLOUDFLARE D1 — CONNECTED";
-const s=D.settings||{};heroTitle.value=s.hero_title||"";heroSubtitle.value=s.hero_subtitle||"";primary.value=s.primary_color||"";secondary.value=s.secondary_color||"";font.value=s.font_family||"";
-renderEpisodes();renderCast();renderStories();renderMessages();
+  const r=await fetch("/api/content");
+  DATA=await r.json();
+
+  const s=DATA.settings||{};
+  hero_title.value=s.hero_title||"";
+  hero_subtitle.value=s.hero_subtitle||"";
+  primary_color.value=s.primary_color||"";
+  secondary_color.value=s.secondary_color||"";
+  font_family.value=s.font_family||"";
+
+  renderAll();
 }
-async function saveHero(){let r=await post({action:"saveHero",hero_title:heroTitle.value,hero_subtitle:heroSubtitle.value,primary_color:primary.value,secondary_color:secondary.value,font_family:font.value});alert(r.success?"Saved":"Error: "+r.error);load()}
 
-function newEpisode(){eid.value="";season.value=1;number.value=1;title.value="";desc.value="";video.value="";image.value=""}
-async function saveEpisode(){let r=await post({action:eid.value?"updateEpisode":"addEpisode",id:eid.value,season:season.value,episode_number:number.value,title:title.value,description:desc.value,video_url:video.value,image_url:image.value,published:true});if(r.success){alert("Episode saved");newEpisode();load()}else alert(r.error)}
-function renderEpisodes(){episodeList.innerHTML=(D.episodes||[]).map(e=>`<div class="item"><b>S${e.season} · E${e.episode_number} — ${esc(e.title)}</b><div class="muted">${e.published?"PUBLISHED":"HIDDEN"}</div><div class="actions"><button onclick="editEpisode(${e.id})">EDIT</button><button class="gray" onclick="toggleEpisode(${e.id},${e.published?0:1})">${e.published?"HIDE":"PUBLISH"}</button><button class="red" onclick="deleteEpisode(${e.id})">DELETE</button></div></div>`).join("")}
-function editEpisode(id){let e=D.episodes.find(x=>x.id===id);eid.value=e.id;season.value=e.season;number.value=e.episode_number;title.value=e.title||"";desc.value=e.description||"";video.value=e.video_url||"";image.value=e.image_url||"";scrollTo({top:0,behavior:"smooth"})}
-async function deleteEpisode(id){if(confirm("DELETE EPISODE?")){await post({action:"deleteEpisode",id});load()}}
-async function toggleEpisode(id,published){await post({action:"toggleEpisode",id,published:!!published});load()}
+async function saveHero(){
+  await api({
+    action:"saveHero",
+    hero_title:hero_title.value,
+    hero_subtitle:hero_subtitle.value,
+    primary_color:primary_color.value,
+    secondary_color:secondary_color.value,
+    font_family:font_family.value
+  });
+  await load();
+}
 
-function newCast(){cid.value="";cname.value="";crole.value="";cbio.value="";cimage.value="";cseason.value=1}
-async function saveCast(){let r=await post({action:cid.value?"updateCast":"addCast",id:cid.value,name:cname.value,role:crole.value,bio:cbio.value,image_url:cimage.value,season:cseason.value,active:true});if(r.success){alert("Cast saved");newCast();load()}else alert(r.error)}
-function renderCast(){castList.innerHTML=(D.cast||[]).map(c=>`<div class="item"><b>${esc(c.name)}</b><div class="muted">${esc(c.role)}</div><div class="actions"><button onclick="editCast(${c.id})">EDIT</button><button class="red" onclick="deleteCast(${c.id})">DELETE</button></div></div>`).join("")}
-function editCast(id){let c=D.cast.find(x=>x.id===id);cid.value=c.id;cname.value=c.name||"";crole.value=c.role||"";cbio.value=c.bio||"";cimage.value=c.image_url||"";cseason.value=c.season||1}
-async function deleteCast(id){if(confirm("DELETE CAST MEMBER?")){await post({action:"deleteCast",id});load()}}
+async function saveContent(){
+  await api({
+    action:"saveContent",
+    section:c_section.value,
+    content_key:c_key.value,
+    content_value:c_value.value,
+    content_type:c_type.value,
+    sort_order:Number(c_order.value)||0
+  });
+  await load();
+}
 
-function newStory(){sid.value="";author.value="";story.value="";simage.value="";sstatus.value="approved"}
-async function saveStory(){let r=await post({action:sid.value?"updateStory":"addStory",id:sid.value,author_name:author.value,story:story.value,image_url:simage.value,status:sstatus.value});if(r.success){alert("Story saved");newStory();load()}else alert(r.error)}
-function renderStories(){storyList.innerHTML=(D.stories||[]).map(s=>`<div class="item"><b>${esc(s.author_name)}</b><div class="muted">${esc(s.status)}</div><p>${esc(s.story)}</p><div class="actions"><button onclick="editStory(${s.id})">EDIT</button><button class="red" onclick="deleteStory(${s.id})">DELETE</button></div></div>`).join("")}
-function editStory(id){let s=D.stories.find(x=>x.id===id);sid.value=s.id;author.value=s.author_name||"";story.value=s.story||"";simage.value=s.image_url||"";sstatus.value=s.status||"pending"}
-async function deleteStory(id){if(confirm("DELETE STORY?")){await post({action:"deleteStory",id});load()}}
+async function saveLink(){
+  await api({
+    action:"saveLink",
+    label:l_label.value,
+    url:l_url.value,
+    location:l_location.value,
+    sort_order:Number(l_order.value)||0
+  });
+  await load();
+}
 
-function newMessage(){mid.value="";message.value=""}
-async function saveMessage(){let r=await post({action:mid.value?"updateMessage":"addMessage",id:mid.value,message:message.value,active:true});if(r.success){alert("Message saved");newMessage();load()}else alert(r.error)}
-function renderMessages(){messageList.innerHTML=(D.messages||[]).map(m=>`<div class="item"><b>${esc(m.message)}</b><div class="actions"><button onclick="editMessage(${m.id})">EDIT</button><button class="red" onclick="deleteMessage(${m.id})">DELETE</button></div></div>`).join("")}
-function editMessage(id){let m=D.messages.find(x=>x.id===id);mid.value=m.id;message.value=m.message||""}
-async function deleteMessage(id){if(confirm("DELETE MESSAGE?")){await post({action:"deleteMessage",id});load()}}
-</script></body></html>
+async function saveMedia(){
+  await api({
+    action:"saveMedia",
+    title:m_title.value,
+    url:m_url.value,
+    media_type:m_type.value,
+    section:m_section.value,
+    sort_order:Number(m_order.value)||0
+  });
+  await load();
+}
+
+async function saveEpisode(){
+  await api({
+    action:"addEpisode",
+    season:Number(e_season.value)||1,
+    episode_number:Number(e_number.value)||1,
+    title:e_title.value,
+    description:e_desc.value,
+    video_url:e_video.value,
+    image_url:e_image.value,
+    published:true
+  });
+  await load();
+}
+
+async function saveCast(){
+  await api({
+    action:"addCast",
+    name:cast_name.value,
+    role:cast_role.value,
+    bio:cast_bio.value,
+    image_url:cast_image.value,
+    season:Number(cast_season.value)||1
+  });
+  await load();
+}
+
+async function saveStory(){
+  await api({
+    action:"addStory",
+    author_name:s_author.value,
+    story:s_story.value,
+    image_url:s_image.value,
+    status:s_status.value
+  });
+  await load();
+}
+
+async function saveMessage(){
+  await api({
+    action:"addMessage",
+    message:messageText.value
+  });
+  await load();
+}
+
+async function saveVoteOption(){
+  await api({
+    action:"saveVoteOption",
+    choice_key:v_key.value,
+    label:v_label.value,
+    title:v_title.value,
+    description:v_desc.value,
+    message_title:v_msg_title.value,
+    message_text:v_msg_text.value,
+    sort_order:Number(v_order.value)||0
+  });
+  await load();
+}
+
+async function del(action,id){
+  if(!confirm("Delete this item?"))return;
+  await api({action,id});
+  await load();
+}
+
+function renderAll(){
+  contentList.innerHTML=(DATA.content||[]).map(x=>`
+    <div class="item">
+      <b>${esc(x.section)} / ${esc(x.content_key)}</b>
+      <div class="small">${esc(x.content_value||"")}</div>
+      <button class="danger" onclick="del('deleteContent',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  linkList.innerHTML=(DATA.links||[]).map(x=>`
+    <div class="item">
+      <b>${esc(x.label)}</b> — ${esc(x.location)}
+      <div class="small">${esc(x.url)}</div>
+      <button class="danger" onclick="del('deleteLink',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  mediaList.innerHTML=(DATA.media||[]).map(x=>`
+    <div class="item">
+      <b>${esc(x.title)}</b> — ${esc(x.media_type)}
+      <div class="small">${esc(x.url)}</div>
+      <button class="danger" onclick="del('deleteMedia',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  episodeList.innerHTML=(DATA.episodes||[]).map(x=>`
+    <div class="item">
+      <b>S${x.season} E${x.episode_number} — ${esc(x.title)}</b>
+      <div class="small">${esc(x.video_url)}</div>
+      <button onclick="toggleEpisode(${x.id},${x.published?0:1})">${x.published?'HIDE':'PUBLISH'}</button>
+      <button class="danger" onclick="del('deleteEpisode',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  castList.innerHTML=(DATA.cast||[]).map(x=>`
+    <div class="item">
+      <b>${esc(x.name)}</b> — ${esc(x.role)}
+      <div class="small">${esc(x.bio||"")}</div>
+      <button class="danger" onclick="del('deleteCast',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  storyList.innerHTML=(DATA.stories||[]).map(x=>`
+    <div class="item">
+      <b>${esc(x.author_name)} — ${esc(x.status)}</b>
+      <div class="small">${esc(x.story)}</div>
+      <button class="danger" onclick="del('deleteStory',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  messageList.innerHTML=(DATA.messages||[]).map(x=>`
+    <div class="item">
+      ${esc(x.message)}
+      <button class="danger" onclick="del('deleteMessage',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  voteOptionList.innerHTML=(DATA.vote_options||[]).map(x=>`
+    <div class="item">
+      <b>${esc(x.label)} — ${esc(x.title)}</b>
+      <div class="small">${esc(x.description||"")}</div>
+      <button class="danger" onclick="del('deleteVoteOption',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  applicationList.innerHTML=(DATA.applications||[]).map(x=>`
+    <div class="item">
+      <b>${esc(x.name)}</b> — ${esc(x.email)} — ${esc(x.status)}
+      <div class="small">${esc(x.story)}</div>
+      <button onclick="updateApplication(${x.id},'approved')">APPROVE</button>
+      <button onclick="updateApplication(${x.id},'rejected')">REJECT</button>
+      <button class="danger" onclick="del('deleteApplication',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  voteResults.innerHTML=(DATA.vote_counts||[]).map(x=>
+    `<div class="item"><b>${esc(x.choice)}</b>: ${x.count} votes</div>`
+  ).join("") || "<p class='small'>No votes yet.</p>";
+}
+
+async function toggleEpisode(id,published){
+  await api({action:"toggleEpisode",id,published:!!published});
+  await load();
+}
+
+async function updateApplication(id,status){
+  await api({action:"updateApplication",id,status});
+  await load();
+}
+
+function esc(v){
+  return String(v??"").replace(/[&<>"']/g,m=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",
+    '"':"&quot;","'":"&#039;"
+  }[m]));
+}
+</script>
+</body>
+</html>
