@@ -1,44 +1,434 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BACK TO X — Admin</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BACK TO X — ADMIN</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#0b080a;color:#f5edf0;font-family:Arial,sans-serif}
-header{padding:24px;border-bottom:1px solid #4A102A}
-h1{margin:0;color:#fff}
-main{padding:24px;max-width:1100px;margin:auto}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-.card{background:#151015;border:1px solid #4A102A;border-radius:14px;padding:22px}
-.card h2{margin-top:0}
-button{background:#4A102A;color:white;border:0;border-radius:8px;padding:12px 18px;cursor:pointer}
-button:hover{opacity:.85}
-.status{margin-top:25px;padding:15px;border-radius:10px;background:#151015}
+body{margin:0;background:#080808;color:#eee;font-family:Arial,sans-serif}
+header{padding:22px 20px;border-bottom:1px solid #292929;position:sticky;top:0;background:#080808;z-index:10}
+.logo{font-size:22px;font-weight:800;letter-spacing:2px}
+main{max-width:1200px;margin:auto;padding:25px 16px 70px}
+.panel{border:1px solid #292929;border-radius:16px;padding:20px;margin-bottom:18px;background:#101010}
+h2{margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+input,textarea,select{width:100%;background:#070707;border:1px solid #333;color:#fff;border-radius:10px;padding:12px;margin:5px 0 10px}
+textarea{min-height:100px;resize:vertical}
+button{border:0;border-radius:10px;padding:11px 15px;background:#4A102A;color:#fff;cursor:pointer;margin:4px}
+button.secondary{background:#292929}
+button.danger{background:#651b1b}
+.item{border-top:1px solid #292929;padding:14px 0}
+.small{font-size:12px;color:#aaa}
+#login{max-width:420px;margin:15vh auto;padding:20px}
+.hidden{display:none}
+.status{margin:10px 0;color:#e9b7c8}
 </style>
-<script src="config.js"></script></head>
+</head>
 <body>
 
+<div id="login" class="panel">
+  <h2>BACK TO X ADMIN</h2>
+  <p class="small">Secure administrator access.</p>
+  <input id="password" type="password" placeholder="ADMIN PASSWORD">
+  <button onclick="doLogin()">ENTER ADMIN</button>
+  <p id="loginMsg" class="status"></p>
+</div>
+
+<div id="app" class="hidden">
 <header>
-  <h1>BACK TO X — ADMIN</h1>
+  <div class="logo">BACK TO X / ADMIN</div>
 </header>
 
 <main>
-  <div class="grid">
-    <div class="card"><h2>Hero</h2><p>Manage hero text and media.</p><button>Manage</button></div>
-    <div class="card"><h2>Episodes</h2><p>Add, edit or remove episodes.</p><button>Manage</button></div>
-    <div class="card"><h2>Cast</h2><p>Manage participants.</p><button>Manage</button></div>
-    <div class="card"><h2>Stories</h2><p>Manage stories and messages.</p><button>Manage</button></div>
-    <div class="card"><h2>Images</h2><p>Manage website images.</p><button>Manage</button></div>
-    <div class="card"><h2>Design</h2><p>Manage colors and fonts.</p><button>Manage</button></div>
-  </div>
 
-  <div class="status">
-    <strong>ADMIN PANEL READY</strong>
-    <p>The dashboard structure is ready. Database controls will be connected next.</p>
-  </div>
+<section class="panel">
+<h2>HERO & BRAND</h2>
+<div class="grid">
+<input id="hero_title" placeholder="Hero title">
+<input id="hero_subtitle" placeholder="Hero subtitle">
+<input id="primary_color" placeholder="#4A102A">
+<input id="secondary_color" placeholder="#0B0B0B">
+<input id="font_family" placeholder="Montserrat, sans-serif">
+</div>
+<button onclick="saveHero()">SAVE HERO</button>
+</section>
+
+<section class="panel">
+<h2>SITE CONTENT</h2>
+<p class="small">Control text and configurable values throughout the site.</p>
+<div class="grid">
+<input id="c_section" placeholder="Section e.g. concept">
+<input id="c_key" placeholder="Key e.g. title">
+<select id="c_type">
+<option value="text">Text</option>
+<option value="html">HTML</option>
+<option value="url">URL</option>
+</select>
+<input id="c_order" type="number" placeholder="Order">
+</div>
+<textarea id="c_value" placeholder="Content value"></textarea>
+<button onclick="saveContent()">SAVE CONTENT</button>
+<div id="contentList"></div>
+</section>
+
+<section class="panel">
+<h2>LINKS / NAVIGATION / SOCIAL</h2>
+<div class="grid">
+<input id="l_label" placeholder="Label">
+<input id="l_url" placeholder="URL">
+<select id="l_location">
+<option value="social">social</option>
+<option value="nav">nav</option>
+<option value="footer">footer</option>
+<option value="button">button</option>
+</select>
+<input id="l_order" type="number" placeholder="Order">
+</div>
+<button onclick="saveLink()">SAVE LINK</button>
+<div id="linkList"></div>
+</section>
+
+<section class="panel">
+<h2>MEDIA</h2>
+<div class="grid">
+<input id="m_title" placeholder="Media title">
+<input id="m_url" placeholder="Image / video URL">
+<select id="m_type">
+<option value="image">image</option>
+<option value="video">video</option>
+</select>
+<input id="m_section" placeholder="Section">
+<input id="m_order" type="number" placeholder="Order">
+</div>
+<button onclick="saveMedia()">SAVE MEDIA</button>
+<div id="mediaList"></div>
+</section>
+
+<section class="panel">
+<h2>EPISODES</h2>
+<div class="grid">
+<input id="e_season" type="number" value="1" placeholder="Season">
+<input id="e_number" type="number" value="1" placeholder="Episode">
+<input id="e_title" placeholder="Title">
+<input id="e_video" placeholder="Video URL">
+<input id="e_image" placeholder="Image URL — leave blank for YouTube auto thumbnail">
+</div>
+<textarea id="e_desc" placeholder="Description"></textarea>
+<button onclick="saveEpisode()">ADD EPISODE</button>
+<div id="episodeList"></div>
+</section>
+
+<section class="panel">
+<h2>CAST</h2>
+<div class="grid">
+<input id="cast_name" placeholder="Name">
+<input id="cast_role" placeholder="Role">
+<input id="cast_image" placeholder="Image URL">
+<input id="cast_season" type="number" value="1" placeholder="Season">
+</div>
+<textarea id="cast_bio" placeholder="Bio"></textarea>
+<button onclick="saveCast()">ADD CAST MEMBER</button>
+<div id="castList"></div>
+</section>
+
+<section class="panel">
+<h2>X WALL / STORIES</h2>
+<div class="grid">
+<input id="s_author" placeholder="Author">
+<input id="s_image" placeholder="Image URL">
+<select id="s_status">
+<option value="approved">approved</option>
+<option value="pending">pending</option>
+<option value="rejected">rejected</option>
+</select>
+</div>
+<textarea id="s_story" placeholder="Story"></textarea>
+<button onclick="saveStory()">ADD STORY</button>
+<div id="storyList"></div>
+</section>
+
+<section class="panel">
+<h2>MESSAGES</h2>
+<textarea id="messageText" placeholder="Message"></textarea>
+<button onclick="saveMessage()">ADD MESSAGE</button>
+<div id="messageList"></div>
+</section>
+
+<section class="panel">
+<h2>VOTING OPTIONS</h2>
+<div class="grid">
+<input id="v_key" placeholder="choice key e.g. back">
+<input id="v_label" placeholder="Label e.g. THE PAST">
+<input id="v_title" placeholder="Title e.g. GO BACK">
+<input id="v_order" type="number" placeholder="Order">
+</div>
+<textarea id="v_desc" placeholder="Description"></textarea>
+<input id="v_msg_title" placeholder="Message title">
+<input id="v_msg_text" placeholder="Message text">
+<button onclick="saveVoteOption()">SAVE VOTE OPTION</button>
+<div id="voteOptionList"></div>
+</section>
+
+<section class="panel">
+<h2>APPLICATIONS</h2>
+<div id="applicationList"></div>
+</section>
+
+<section class="panel">
+<h2>VOTE RESULTS</h2>
+<div id="voteResults"></div>
+</section>
+
 </main>
+</div>
 
+<script>
+let DATA={};
+
+async function api(body){
+  const r=await fetch("/api/content",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(body)
+  });
+  const d=await r.json();
+  if(!r.ok || d.error) throw new Error(d.error||"Request failed");
+  return d;
+}
+
+async function doLogin(){
+  const password=document.getElementById("password").value;
+  const msg=document.getElementById("loginMsg");
+  msg.textContent="CHECKING...";
+  const r=await fetch("/api/admin",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({action:"login",password})
+  });
+  const d=await r.json();
+  if(!r.ok || !d.success){
+    msg.textContent=d.error||"Wrong password";
+    return;
+  }
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  load();
+}
+
+async function load(){
+  const r=await fetch("/api/content");
+  DATA=await r.json();
+
+  const s=DATA.settings||{};
+  hero_title.value=s.hero_title||"";
+  hero_subtitle.value=s.hero_subtitle||"";
+  primary_color.value=s.primary_color||"";
+  secondary_color.value=s.secondary_color||"";
+  font_family.value=s.font_family||"";
+
+  renderAll();
+}
+
+async function saveHero(){
+  await api({
+    action:"saveHero",
+    hero_title:hero_title.value,
+    hero_subtitle:hero_subtitle.value,
+    primary_color:primary_color.value,
+    secondary_color:secondary_color.value,
+    font_family:font_family.value
+  });
+  await load();
+}
+
+async function saveContent(){
+  await api({
+    action:"saveContent",
+    section:c_section.value,
+    content_key:c_key.value,
+    content_value:c_value.value,
+    content_type:c_type.value,
+    sort_order:Number(c_order.value)||0
+  });
+  await load();
+}
+
+async function saveLink(){
+  await api({
+    action:"saveLink",
+    label:l_label.value,
+    url:l_url.value,
+    location:l_location.value,
+    sort_order:Number(l_order.value)||0
+  });
+  await load();
+}
+
+async function saveMedia(){
+  await api({
+    action:"saveMedia",
+    title:m_title.value,
+    url:m_url.value,
+    media_type:m_type.value,
+    section:m_section.value,
+    sort_order:Number(m_order.value)||0
+  });
+  await load();
+}
+
+async function saveEpisode(){
+  await api({
+    action:"addEpisode",
+    season:Number(e_season.value)||1,
+    episode_number:Number(e_number.value)||1,
+    title:e_title.value,
+    description:e_desc.value,
+    video_url:e_video.value,
+    image_url:e_image.value,
+    published:true
+  });
+  await load();
+}
+
+async function saveCast(){
+  await api({
+    action:"addCast",
+    name:cast_name.value,
+    role:cast_role.value,
+    bio:cast_bio.value,
+    image_url:cast_image.value,
+    season:Number(cast_season.value)||1
+  });
+  await load();
+}
+
+async function saveStory(){
+  await api({
+    action:"addStory",
+    author_name:s_author.value,
+    story:s_story.value,
+    image_url:s_image.value,
+    status:s_status.value
+  });
+  await load();
+}
+
+async function saveMessage(){
+  await api({
+    action:"addMessage",
+    message:messageText.value
+  });
+  await load();
+}
+
+async function saveVoteOption(){
+  await api({
+    action:"saveVoteOption",
+    choice_key:v_key.value,
+    label:v_label.value,
+    title:v_title.value,
+    description:v_desc.value,
+    message_title:v_msg_title.value,
+    message_text:v_msg_text.value,
+    sort_order:Number(v_order.value)||0
+  });
+  await load();
+}
+
+async function del(action,id){
+  if(!confirm("Delete this item?"))return;
+  await api({action,id});
+  await load();
+}
+
+function renderAll(){
+  contentList.innerHTML=(DATA.content||[]).map(x=>`
+    <div class="item">
+      <b>${esc(x.section)} / ${esc(x.content_key)}</b>
+      <div class="small">${esc(x.content_value||"")}</div>
+      <button class="danger" onclick="del('deleteContent',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  linkList.innerHTML=(DATA.links||[]).map(x=>`
+    <div class="item">
+      <b>${esc(x.label)}</b> — ${esc(x.location)}
+      <div class="small">${esc(x.url)}</div>
+      <button class="danger" onclick="del('deleteLink',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  mediaList.innerHTML=(DATA.media||[]).map(x=>`
+    <div class="item">
+      <b>${esc(x.title)}</b> — ${esc(x.media_type)}
+      <div class="small">${esc(x.url)}</div>
+      <button class="danger" onclick="del('deleteMedia',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  episodeList.innerHTML=(DATA.episodes||[]).map(x=>`
+    <div class="item">
+      <b>S${x.season} E${x.episode_number} — ${esc(x.title)}</b>
+      <div class="small">${esc(x.video_url)}</div>
+      <button onclick="toggleEpisode(${x.id},${x.published?0:1})">${x.published?'HIDE':'PUBLISH'}</button>
+      <button class="danger" onclick="del('deleteEpisode',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  castList.innerHTML=(DATA.cast||[]).map(x=>`
+    <div class="item">
+      <b>${esc(x.name)}</b> — ${esc(x.role)}
+      <div class="small">${esc(x.bio||"")}</div>
+      <button class="danger" onclick="del('deleteCast',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  storyList.innerHTML=(DATA.stories||[]).map(x=>`
+    <div class="item">
+      <b>${esc(x.author_name)} — ${esc(x.status)}</b>
+      <div class="small">${esc(x.story)}</div>
+      <button class="danger" onclick="del('deleteStory',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  messageList.innerHTML=(DATA.messages||[]).map(x=>`
+    <div class="item">
+      ${esc(x.message)}
+      <button class="danger" onclick="del('deleteMessage',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  voteOptionList.innerHTML=(DATA.vote_options||[]).map(x=>`
+    <div class="item">
+      <b>${esc(x.label)} — ${esc(x.title)}</b>
+      <div class="small">${esc(x.description||"")}</div>
+      <button class="danger" onclick="del('deleteVoteOption',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  applicationList.innerHTML=(DATA.applications||[]).map(x=>`
+    <div class="item">
+      <b>${esc(x.name)}</b> — ${esc(x.email)} — ${esc(x.status)}
+      <div class="small">${esc(x.story)}</div>
+      <button onclick="updateApplication(${x.id},'approved')">APPROVE</button>
+      <button onclick="updateApplication(${x.id},'rejected')">REJECT</button>
+      <button class="danger" onclick="del('deleteApplication',${x.id})">DELETE</button>
+    </div>`).join("");
+
+  voteResults.innerHTML=(DATA.vote_counts||[]).map(x=>
+    `<div class="item"><b>${esc(x.choice)}</b>: ${x.count} votes</div>`
+  ).join("") || "<p class='small'>No votes yet.</p>";
+}
+
+async function toggleEpisode(id,published){
+  await api({action:"toggleEpisode",id,published:!!published});
+  await load();
+}
+
+async function updateApplication(id,status){
+  await api({action:"updateApplication",id,status});
+  await load();
+}
+
+function esc(v){
+  return String(v??"").replace(/[&<>"']/g,m=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",
+    '"':"&quot;","'":"&#039;"
+  }[m]));
+}
+</script>
 </body>
 </html>

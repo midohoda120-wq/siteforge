@@ -780,8 +780,8 @@ header{position:fixed;height:70px;padding:0 18px}.logo{font-size:19px;letter-spa
 </section>
 
 <section class="section" id="concept">
-  <h2 class="section-title" data-cms="concept.title">THE <span>PAST IS BACK.</span></h2>
-  <p class="intro" data-cms="concept.intro">Some stories end. Some stories come back.</p>
+  <h2 class="section-title">THE <span>PAST IS BACK.</span></h2>
+  <p class="intro">Some stories end. Some stories come back.</p>
   <div class="choices" id="concept-choices">
     <div class="choice"><h3>BACK TO X</h3><p>Face the person you once loved and discover if the story deserves another chance.</p></div>
     <div class="choice"><h3>CHOOSE NEW</h3><p>Leave the past behind and explore a connection with someone completely new.</p></div>
@@ -790,7 +790,7 @@ header{position:fixed;height:70px;padding:0 18px}.logo{font-size:19px;letter-spa
 </section>
 
 <section class="section" id="how-it-works">
-  <h2 class="section-title" data-cms="how-it-works.title">HOW IT <span>WORKS.</span></h2>
+  <h2 class="section-title">HOW IT <span>WORKS.</span></h2>
   <p class="intro">Four stages. One final choice.</p>
   <div class="steps">
     <div class="step"><div class="number">01</div><h3>THE X</h3><p>Your unfinished relationship returns to the story.</p></div>
@@ -841,8 +841,8 @@ header{position:fixed;height:70px;padding:0 18px}.logo{font-size:19px;letter-spa
 </section>
 
 <section class="section" id="apply">
-  <h2 class="section-title join-title" data-cms="apply.title">READY TO <span>GO BACK?</span></h2>
-  <p class="intro" data-cms="apply.intro">Think you have an unfinished story? Ready to face your X and make the choice?</p>
+  <h2 class="section-title join-title">READY TO <span>GO BACK?</span></h2>
+  <p class="intro">Think you have an unfinished story? Ready to face your X and make the choice?</p>
   <form class="apply-form" id="apply-form">
     <input id="app-name" type="text" placeholder="YOUR NAME" required>
     <input id="app-email" type="email" placeholder="YOUR EMAIL" required>
@@ -853,8 +853,8 @@ header{position:fixed;height:70px;padding:0 18px}.logo{font-size:19px;letter-spa
 </section>
 
 <section class="section" id="voting">
-  <h2 class="section-title" data-cms="voting.title">MAKE THE <span>CHOICE.</span></h2>
-  <p class="intro" data-cms="voting.intro">If you were in their place, what would you choose?</p>
+  <h2 class="section-title">MAKE THE <span>CHOICE.</span></h2>
+  <p class="intro">If you were in their place, what would you choose?</p>
   <div class="choices" id="vote-choices">
 
     <div class="choice vote-option" data-vote="back">
@@ -895,8 +895,8 @@ header{position:fixed;height:70px;padding:0 18px}.logo{font-size:19px;letter-spa
 </section>
 
 <section class="section" id="social">
-  <h2 class="section-title" data-cms="social.title">FOLLOW <span>THE X.</span></h2>
-  <p class="intro" data-cms="social.intro">Stay close. Follow the story beyond the screen.</p>
+  <h2 class="section-title">FOLLOW <span>THE X.</span></h2>
+  <p class="intro">Stay close. Follow the story beyond the screen.</p>
   <div class="social-luxury">
     <a href="#" class="social-card"><div class="social-icon">◎</div><div><small>FOLLOW US ON</small><strong>INSTAGRAM</strong></div><i>↗</i></a>
     <a href="#" class="social-card"><div class="social-icon">♪</div><div><small>FOLLOW US ON</small><strong>TIKTOK</strong></div><i>↗</i></a>
@@ -1004,7 +1004,11 @@ header{position:fixed;height:70px;padding:0 18px}.logo{font-size:19px;letter-spa
 </div>
 
 <script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
+const supabaseUrl = "https://zdwawtqhmfbijgmacayq.supabase.co";
+const supabaseKey = "sb_publishable_cDcbGipla853RnSx5iZT5g_sx54bvQ";
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
@@ -1062,8 +1066,6 @@ document.addEventListener("keydown", e => { if(e.key === "Escape") closeEpisode(
 
 
 
-
-
 $("#apply-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -1075,37 +1077,34 @@ $("#apply-form")?.addEventListener("submit", async (e) => {
   msg.textContent = "SENDING...";
 
   try {
-    const response = await fetch("/api/content", {
+    const googleRequest = fetch("https://script.google.com/macros/s/AKfycbxU2warqN4YOSp9I8iGG9epVrmTXG7aRjiud9pg2CHgRkCy9yPNLBseCICm06oazKDx/exec", {
       method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-        action: "submitApplication",
-        name,
-        email,
-        story
-      })
+      body: JSON.stringify({ name, email, story })
     });
 
-    const data = await response.json();
+    const { error } = await supabase
+      .from("stories")
+      .insert([{ name, story }]);
 
-    if (!response.ok || !data.success) {
-      throw new Error(data.error || "Application failed");
-    }
+    if (error) throw error;
+
+    await googleRequest;
 
     msg.textContent = "APPLICATION RECEIVED ✓";
     msg.style.cssText = "margin-top:10px;color:#e9b7c8;";
     e.target.reset();
-
+    loadStories();
   } catch (error) {
-    console.error("Application error:", error);
+    console.error(error);
     msg.textContent = "SOMETHING WENT WRONG. PLEASE TRY AGAIN.";
   }
 });
 
 
-let voteOptions = [];
+
+const voteChoices = ["back","new","self"];
 let selectedVote = localStorage.getItem("back_to_x_selected") || "";
-let voteCounts = {};
+let voteCounts = {back:0,new:0,self:0};
 
 function renderVotes(){
   $$(".vote-option").forEach(option => {
@@ -1116,66 +1115,28 @@ function renderVotes(){
 }
 
 async function loadVotes(){
-  try {
-    const response = await fetch("/api/content");
-    const data = await response.json();
+  const {data,error} = await supabase
+    .from("votes")
+    .select("choice");
 
-    voteOptions = data.vote_options || [];
-
-    if (voteOptions.length) {
-      const container = $("#vote-choices");
-
-      container.innerHTML = voteOptions
-        .filter(v => v.active !== 0)
-        .map(v => `
-          <div class="choice vote-option" data-vote="${escapeHTML(v.choice_key)}">
-            <span class="vote-choice-number">${escapeHTML(v.label || "")}</span>
-            <h3>${escapeHTML(v.title || "")}</h3>
-            <p>${escapeHTML(v.description || "")}</p>
-            <button class="vote-btn" data-vote="${escapeHTML(v.choice_key)}" type="button">MAKE YOUR CHOICE</button>
-            <div class="vote-choice-message">
-              <strong>${escapeHTML(v.message_title || "")}</strong>
-              <span>${escapeHTML(v.message_text || "")}</span>
-            </div>
-          </div>
-        `).join("");
-
-      $$(".vote-btn").forEach(btn => {
-        btn.addEventListener("click", e => {
-          e.stopPropagation();
-          submitVote(btn.dataset.vote, btn);
-        });
-      });
-
-      $$(".vote-option").forEach(option => {
-        option.addEventListener("click", () => {
-          const btn = option.querySelector(".vote-btn");
-          if (btn) btn.click();
-        });
-      });
-    }
-
-    voteCounts = {};
-    (data.vote_counts || []).forEach(row => {
-      voteCounts[row.choice] = Number(row.count) || 0;
-    });
-
-    renderVotes();
-
-    const results = $("#vote-results");
-    if(results && Object.keys(voteCounts).length){
-      results.innerHTML = Object.entries(voteCounts)
-        .map(([key,count]) => `<div class="vote-result">${escapeHTML(key).toUpperCase()} — ${count}</div>`)
-        .join("");
-    }
-
-  } catch(error) {
-    console.error("Vote load error:", error);
+  if(error){
+    console.error("Vote load error:",error);
+    return;
   }
+
+  voteCounts = {back:0,new:0,self:0};
+
+  (data || []).forEach(row => {
+    if(Object.prototype.hasOwnProperty.call(voteCounts,row.choice)){
+      voteCounts[row.choice]++;
+    }
+  });
+
+  renderVotes();
 }
 
-async function submitVote(choice, btn){
-  if(selectedVote) return;
+async function submitVote(choice,btn){
+  if(selectedVote || !voteChoices.includes(choice)) return;
 
   const buttons = $$(".vote-btn");
   buttons.forEach(b => b.disabled = true);
@@ -1183,37 +1144,47 @@ async function submitVote(choice, btn){
   const oldText = btn.textContent;
   btn.textContent = "SENDING...";
 
-  try {
-    const response = await fetch("/api/content", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        action:"submitVote",
-        choice
-      })
-    });
+  const {error} = await supabase
+    .from("votes")
+    .insert({choice});
 
-    const data = await response.json();
-
-    if(!response.ok || !data.success)
-      throw new Error(data.error || "Vote failed");
-
-    selectedVote = choice;
-    localStorage.setItem("back_to_x_selected", selectedVote);
-
-    btn.textContent = oldText;
-    renderVotes();
-    await loadVotes();
-
-  } catch(error) {
-    console.error("Vote submit error:", error);
+  if(error){
+    console.error("Vote submit error:",error);
     btn.textContent = oldText;
     buttons.forEach(b => b.disabled = false);
+    return;
   }
+
+  selectedVote = choice;
+
+  localStorage.setItem(
+    "back_to_x_selected",
+    selectedVote
+  );
+
+  btn.textContent = oldText;
+  renderVotes();
+  await loadVotes();
 }
 
 renderVotes();
+
+$$(".vote-btn").forEach(btn => {
+  btn.addEventListener("click",e => {
+    e.stopPropagation();
+    submitVote(btn.dataset.vote,btn);
+  });
+});
+
+$$(".vote-option").forEach(option => {
+  option.addEventListener("click",() => {
+    const btn = option.querySelector(".vote-btn");
+    if(btn) btn.click();
+  });
+});
+
 loadVotes();
+
 
 
 async function loadStories(){
@@ -1485,87 +1456,29 @@ $$(".watch-btn").forEach(btn=>{
 
 </script>
 <script>
-
-
 async function loadD1Content(){
   try{
     const response = await fetch("/api/content");
     const data = await response.json();
 
     if(data.settings){
-      const s = data.settings;
-
       const title = document.querySelector(".hero h1");
       const subtitle = document.querySelector(".hero p");
 
-      if(title && s.hero_title) title.textContent = s.hero_title;
-      if(subtitle && s.hero_subtitle) subtitle.textContent = s.hero_subtitle;
-
-      if(s.primary_color)
-        document.documentElement.style.setProperty("--primary-color", s.primary_color);
-
-      if(s.secondary_color)
-        document.documentElement.style.setProperty("--secondary-color", s.secondary_color);
-
-      if(s.font_family)
-        document.body.style.fontFamily = s.font_family;
-    }
-
-    // Generic CMS values.
-    (data.content || [])
-      .filter(x => x.active !== 0)
-      .forEach(x => {
-        const selector = `[data-cms="${CSS.escape(x.section + "." + x.content_key)}"]`;
-        document.querySelectorAll(selector).forEach(el => {
-          if(x.content_type === "html") el.innerHTML = x.content_value;
-          else el.textContent = x.content_value;
-        });
-      });
-
-    // Social / navigation links.
-    const social = (data.links || [])
-      .filter(x => x.active !== 0 && x.location === "social");
-
-    const socialCards = document.querySelectorAll(".social-card");
-
-    social.forEach((link, i) => {
-      const el = socialCards[i];
-      if(!el) return;
-
-      el.href = link.url || "#";
-
-      const strong = el.querySelector("strong");
-      if(strong) strong.textContent = link.label || strong.textContent;
-    });
-
-    // Active site message.
-    const message = (data.messages || [])
-      .find(x => x.active !== 0);
-
-    if(message){
-      let bar = document.getElementById("d1-site-message");
-
-      if(!bar){
-        bar = document.createElement("div");
-        bar.id = "d1-site-message";
-        bar.style.cssText =
-          "position:fixed;top:0;left:0;right:0;z-index:99998;" +
-          "padding:10px 16px;text-align:center;" +
-          "background:#4A102A;color:#fff;font-size:13px;";
-        document.body.prepend(bar);
+      if(title && data.settings.hero_title){
+        title.textContent = data.settings.hero_title;
       }
 
-      bar.textContent = message.message;
+      if(subtitle && data.settings.hero_subtitle){
+        subtitle.textContent = data.settings.hero_subtitle;
+      }
     }
-
   }catch(error){
     console.error("D1 connection error:", error);
   }
 }
 
 loadD1Content();
-
-
 </script>
 <script>
 async function loadEpisodesFromD1(){
