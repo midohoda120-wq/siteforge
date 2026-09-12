@@ -1419,5 +1419,35 @@ async function loadD1Content(){
 
 loadD1Content();
 </script>
+<script>
+async function loadEpisodesFromD1(){
+  try{
+    const response = await fetch("/api/content");
+    const data = await response.json();
+
+    const container = document.querySelector(".episodes");
+    if(!container || !data.episodes) return;
+
+    if(data.episodes.length === 0) return;
+
+    container.innerHTML = data.episodes.map(ep => `
+      <article class="episode">
+        <div class="episode-image">
+          ${ep.image_url ? `<img src="${ep.image_url}" alt="${ep.title || 'Episode'}">` : ""}
+        </div>
+        <div class="episode-content">
+          <span>SEASON ${ep.season || 1} · EPISODE ${ep.episode_number || 1}</span>
+          <h3>${ep.title || ""}</h3>
+          <p>${ep.description || ""}</p>
+        </div>
+      </article>
+    `).join("");
+  }catch(error){
+    console.error("Episodes D1 error:", error);
+  }
+}
+
+loadEpisodesFromD1();
+</script>
 </body>
 </html>
