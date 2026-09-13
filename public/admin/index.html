@@ -342,11 +342,201 @@ async function del(action,id){
   await load();
 }
 
+function editContent(id){
+  const x=DATA.content.find(v=>v.id==id); if(!x)return;
+  c_section.value=x.section||"";
+  c_key.value=x.content_key||"";
+  c_value.value=x.content_value||"";
+  c_type.value=x.content_type||"text";
+  c_order.value=x.sort_order||0;
+  window.editContentId=id;
+}
+
+async function saveContent(){
+  await api({
+    action:"saveContent",
+    id:window.editContentId||null,
+    section:c_section.value,
+    content_key:c_key.value,
+    content_value:c_value.value,
+    content_type:c_type.value,
+    sort_order:Number(c_order.value)||0
+  });
+  window.editContentId=null;
+  await load();
+}
+
+function editLink(id){
+  const x=DATA.links.find(v=>v.id==id); if(!x)return;
+  l_label.value=x.label||"";
+  l_url.value=x.url||"";
+  l_location.value=x.location||"social";
+  l_order.value=x.sort_order||0;
+  window.editLinkId=id;
+}
+
+async function saveLink(){
+  await api({
+    action:"saveLink",
+    id:window.editLinkId||null,
+    label:l_label.value,
+    url:l_url.value,
+    location:l_location.value,
+    sort_order:Number(l_order.value)||0
+  });
+  window.editLinkId=null;
+  await load();
+}
+
+function editMedia(id){
+  const x=DATA.media.find(v=>v.id==id); if(!x)return;
+  m_title.value=x.title||"";
+  m_url.value=x.url||"";
+  m_type.value=x.media_type||"image";
+  m_section.value=x.section||"general";
+  m_order.value=x.sort_order||0;
+  window.editMediaId=id;
+}
+
+async function saveMedia(){
+  await api({
+    action:"saveMedia",
+    id:window.editMediaId||null,
+    title:m_title.value,
+    url:m_url.value,
+    media_type:m_type.value,
+    section:m_section.value,
+    sort_order:Number(m_order.value)||0
+  });
+  window.editMediaId=null;
+  await load();
+}
+
+function editEpisode(id){
+  const x=DATA.episodes.find(v=>v.id==id); if(!x)return;
+  e_season.value=x.season||1;
+  e_number.value=x.episode_number||1;
+  e_title.value=x.title||"";
+  e_desc.value=x.description||"";
+  e_video.value=x.video_url||"";
+  e_image.value=x.image_url||"";
+  window.editEpisodeId=id;
+}
+
+async function saveEpisode(){
+  await api({
+    action:window.editEpisodeId?"updateEpisode":"addEpisode",
+    id:window.editEpisodeId||null,
+    season:Number(e_season.value)||1,
+    episode_number:Number(e_number.value)||1,
+    title:e_title.value,
+    description:e_desc.value,
+    video_url:e_video.value,
+    image_url:e_image.value,
+    published:true
+  });
+  window.editEpisodeId=null;
+  await load();
+}
+
+function editCast(id){
+  const x=DATA.cast.find(v=>v.id==id); if(!x)return;
+  cast_name.value=x.name||"";
+  cast_role.value=x.role||"";
+  cast_bio.value=x.bio||"";
+  cast_image.value=x.image_url||"";
+  cast_season.value=x.season||1;
+  window.editCastId=id;
+}
+
+async function saveCast(){
+  await api({
+    action:window.editCastId?"updateCast":"addCast",
+    id:window.editCastId||null,
+    name:cast_name.value,
+    role:cast_role.value,
+    bio:cast_bio.value,
+    image_url:cast_image.value,
+    season:Number(cast_season.value)||1,
+    active:true
+  });
+  window.editCastId=null;
+  await load();
+}
+
+function editStory(id){
+  const x=DATA.stories.find(v=>v.id==id); if(!x)return;
+  s_author.value=x.author_name||"";
+  s_story.value=x.story||"";
+  s_image.value=x.image_url||"";
+  s_status.value=x.status||"pending";
+  window.editStoryId=id;
+}
+
+async function saveStory(){
+  await api({
+    action:window.editStoryId?"updateStory":"addStory",
+    id:window.editStoryId||null,
+    author_name:s_author.value,
+    story:s_story.value,
+    image_url:s_image.value,
+    status:s_status.value
+  });
+  window.editStoryId=null;
+  await load();
+}
+
+function editMessage(id){
+  const x=DATA.messages.find(v=>v.id==id); if(!x)return;
+  messageText.value=x.message||"";
+  window.editMessageId=id;
+}
+
+async function saveMessage(){
+  await api({
+    action:window.editMessageId?"updateMessage":"addMessage",
+    id:window.editMessageId||null,
+    message:messageText.value,
+    active:true
+  });
+  window.editMessageId=null;
+  await load();
+}
+
+function editVoteOption(id){
+  const x=DATA.vote_options.find(v=>v.id==id); if(!x)return;
+  v_key.value=x.choice_key||"";
+  v_label.value=x.label||"";
+  v_title.value=x.title||"";
+  v_order.value=x.sort_order||0;
+  v_desc.value=x.description||"";
+  v_msg_title.value=x.message_title||"";
+  v_msg_text.value=x.message_text||"";
+  window.editVoteOptionId=id;
+}
+
+async function saveVoteOption(){
+  await api({
+    action:"saveVoteOption",
+    id:window.editVoteOptionId||null,
+    choice_key:v_key.value,
+    label:v_label.value,
+    title:v_title.value,
+    description:v_desc.value,
+    message_title:v_msg_title.value,
+    message_text:v_msg_text.value,
+    sort_order:Number(v_order.value)||0
+  });
+  window.editVoteOptionId=null;
+  await load();
+}
+
 function renderAll(){
   contentList.innerHTML=(DATA.content||[]).map(x=>`
     <div class="item">
       <b>${esc(x.section)} / ${esc(x.content_key)}</b>
       <div class="small">${esc(x.content_value||"")}</div>
+      <button onclick="editContent(${x.id})">EDIT</button>
       <button class="danger" onclick="del('deleteContent',${x.id})">DELETE</button>
     </div>`).join("");
 
@@ -354,6 +544,7 @@ function renderAll(){
     <div class="item">
       <b>${esc(x.label)}</b> — ${esc(x.location)}
       <div class="small">${esc(x.url)}</div>
+      <button onclick="editLink(${x.id})">EDIT</button>
       <button class="danger" onclick="del('deleteLink',${x.id})">DELETE</button>
     </div>`).join("");
 
@@ -361,6 +552,7 @@ function renderAll(){
     <div class="item">
       <b>${esc(x.title)}</b> — ${esc(x.media_type)}
       <div class="small">${esc(x.url)}</div>
+      <button onclick="editMedia(${x.id})">EDIT</button>
       <button class="danger" onclick="del('deleteMedia',${x.id})">DELETE</button>
     </div>`).join("");
 
@@ -368,6 +560,7 @@ function renderAll(){
     <div class="item">
       <b>S${x.season} E${x.episode_number} — ${esc(x.title)}</b>
       <div class="small">${esc(x.video_url)}</div>
+      <button onclick="editEpisode(${x.id})">EDIT</button>
       <button onclick="toggleEpisode(${x.id},${x.published?0:1})">${x.published?'HIDE':'PUBLISH'}</button>
       <button class="danger" onclick="del('deleteEpisode',${x.id})">DELETE</button>
     </div>`).join("");
@@ -376,6 +569,7 @@ function renderAll(){
     <div class="item">
       <b>${esc(x.name)}</b> — ${esc(x.role)}
       <div class="small">${esc(x.bio||"")}</div>
+      <button onclick="editCast(${x.id})">EDIT</button>
       <button class="danger" onclick="del('deleteCast',${x.id})">DELETE</button>
     </div>`).join("");
 
@@ -383,12 +577,14 @@ function renderAll(){
     <div class="item">
       <b>${esc(x.author_name)} — ${esc(x.status)}</b>
       <div class="small">${esc(x.story)}</div>
+      <button onclick="editStory(${x.id})">EDIT</button>
       <button class="danger" onclick="del('deleteStory',${x.id})">DELETE</button>
     </div>`).join("");
 
   messageList.innerHTML=(DATA.messages||[]).map(x=>`
     <div class="item">
       ${esc(x.message)}
+      <button onclick="editMessage(${x.id})">EDIT</button>
       <button class="danger" onclick="del('deleteMessage',${x.id})">DELETE</button>
     </div>`).join("");
 
@@ -396,6 +592,7 @@ function renderAll(){
     <div class="item">
       <b>${esc(x.label)} — ${esc(x.title)}</b>
       <div class="small">${esc(x.description||"")}</div>
+      <button onclick="editVoteOption(${x.id})">EDIT</button>
       <button class="danger" onclick="del('deleteVoteOption',${x.id})">DELETE</button>
     </div>`).join("");
 
@@ -420,6 +617,12 @@ async function toggleEpisode(id,published){
 
 async function updateApplication(id,status){
   await api({action:"updateApplication",id,status});
+  await load();
+}
+
+async function del(action,id){
+  if(!confirm("Delete this item?"))return;
+  await api({action,id});
   await load();
 }
 
