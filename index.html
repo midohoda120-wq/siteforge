@@ -1003,7 +1003,9 @@ header{position:fixed;height:70px;padding:0 18px}.logo{font-size:19px;letter-spa
 </div>
 
 <script type="module">
+import { inject } from '@vercel/analytics';
 
+inject();
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
